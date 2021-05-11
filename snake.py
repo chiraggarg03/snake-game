@@ -1,20 +1,22 @@
 import pygame
 from random import randrange
 
-Size = 600
-Scale = 15
-x1_change = 0
+# global variables for the game
+Size = 600    # size of canvas
+Scale = 15    # size of block
+x1_change = 0    # variables for changing direction / Moving
 y1_change = 0
-white = (255, 255, 255)
+white = (255, 255, 255)    # colour tuples for pygame
 red = (255, 0, 0)
 black = (0, 0, 0)
 grey = (100, 100, 100)
-Snake = [(Size / 2, Size / 2)]
-food = (randrange(0, Size - Scale, Scale), randrange(0, Size - Scale, Scale))
-score = 0
-done = False
+Snake = [(Size / 2, Size / 2)]    # snake at start position
+food = (randrange(0, Size - Scale, Scale), randrange(0, Size - Scale, Scale))    # food initialisation
+score = 0    #score counter
+done = False    # Loop Intialisation condition
 
 
+# draws the snake on the screen
 def draw_snake():
     global Snake
     for body in Snake:
@@ -22,12 +24,14 @@ def draw_snake():
             body[0], body[1], Scale, Scale))
 
 
+# draws the food at the food's location
 def draw_food():
     global Scale
     pygame.draw.rect(screen, red, pygame.Rect(
         food[0], food[1], Scale, Scale))
 
 
+# moves the snake
 def move():
     global Snake
     global x1_change
@@ -55,6 +59,7 @@ def move():
     Snake.pop(0)
 
 
+# checks for boundaries
 def boundary_check():
     global Snake
     global Size
@@ -62,6 +67,7 @@ def boundary_check():
         return True
 
 
+# eats the food and increses the length
 def food_eat():
     global food
     global Size
@@ -81,6 +87,7 @@ def food_eat():
     print(score)
 
 
+# checks in snake collides with itself
 def body_check():
     global Snake
     global score
@@ -90,6 +97,7 @@ def body_check():
     
 
 
+# pygame initialisation
 pygame.init()
 screen = pygame.display.set_mode((Size, Size))
 pygame.display.set_caption('Snake OP')
@@ -98,6 +106,7 @@ font = pygame.font.Font('freesansbold.ttf', 32)
 text = font.render(str(score), True, grey)
 textRect = text.get_rect(center=(Size/2, Size/2))
 
+# main loop
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -117,6 +126,6 @@ while not done:
 
     pygame.display.update()
 
-    clock.tick(10)
+    clock.tick(10)    # change this to change speed
 
 
