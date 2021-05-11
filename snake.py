@@ -1,0 +1,122 @@
+import pygame
+from random import randrange
+
+Size = 600
+Scale = 15
+x1_change = 0
+y1_change = 0
+white = (255, 255, 255)
+red = (255, 0, 0)
+black = (0, 0, 0)
+grey = (100, 100, 100)
+Snake = [(Size / 2, Size / 2)]
+food = (randrange(0, Size - Scale, Scale), randrange(0, Size - Scale, Scale))
+score = 0
+done = False
+
+
+def draw_snake():
+    global Snake
+    for body in Snake:
+        pygame.draw.rect(screen, white, pygame.Rect(
+            body[0], body[1], Scale, Scale))
+
+
+def draw_food():
+    global Scale
+    pygame.draw.rect(screen, red, pygame.Rect(
+        food[0], food[1], Scale, Scale))
+
+
+def move():
+    global Snake
+    global x1_change
+    global y1_change
+    global Scale
+
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_LEFT and x1_change != Scale:
+            x1_change = -1 * Scale
+            y1_change = 0
+        elif event.key == pygame.K_RIGHT and x1_change != -1 * Scale:
+            x1_change = Scale
+            y1_change = 0
+        elif event.key == pygame.K_UP and y1_change != Scale:
+            y1_change = -1 * Scale
+            x1_change = 0
+        elif event.key == pygame.K_DOWN and y1_change != -1 * Scale:
+            y1_change = Scale
+            x1_change = 0
+
+    x2 = Snake[-1][0] + x1_change
+    y2 = Snake[-1][1] + y1_change
+    to_append = (x2, y2)
+    Snake.append(to_append)
+    Snake.pop(0)
+
+
+def boundary_check():
+    global Snake
+    global Size
+    if 0 > Snake[-1][0] or Size - Scale < Snake[-1][0] or Size - Scale < Snake[-1][1] or 0 > Snake[-1][1]:
+        return True
+
+
+def food_eat():
+    global food
+    global Size
+    global Scale
+    global score
+    global x1_change
+    global y1_change
+
+    x1 = Snake[-1][0] + x1_change
+    y1 = Snake[-1][1] + y1_change
+    to_append = (x1, y1)
+    Snake.append(to_append)
+    while food in Snake:
+        food = (randrange(0, Size - Scale, Scale),
+                randrange(0, Size - Scale, Scale))
+    score += 1
+    print(score)
+
+
+def body_check():
+    global Snake
+    global score
+    head = Snake[-1]
+    if head in Snake[0:score]:
+        return True
+    
+
+
+pygame.init()
+screen = pygame.display.set_mode((Size, Size))
+pygame.display.set_caption('Snake OP')
+clock = pygame.time.Clock()
+font = pygame.font.Font('freesansbold.ttf', 32)
+text = font.render(str(score), True, grey)
+textRect = text.get_rect(center=(Size/2, Size/2))
+
+while not done:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+
+    screen.fill(black)
+    if boundary_check() or body_check():
+        break
+    text = font.render(str(score), True, grey)
+    screen.blit(text, textRect)
+    draw_snake()
+    draw_food()
+    if food == Snake[-1]:
+        food_eat()
+    else:
+        move()
+
+    pygame.display.update()
+
+    clock.tick(10)
+
+
